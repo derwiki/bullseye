@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
           return;
         }
         const newConfetti = Date.now();
-        if ((newConfetti - lastConfetti) < 500) {
+        if ((newConfetti - lastConfetti) > 500) {
           lastConfetti = newConfetti;
           confetti({
             particleCount: 80,
