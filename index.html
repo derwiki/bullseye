@@ -5,10 +5,11 @@
       let socket = io();
       let el;
 
-      socket.emit('playerLogIn', (response) => {
-        console.log('player log in response', response);
+      socket.emit('playerLogIn', {name: 'adam1'}, (socket) => {
+        console.log('player log in response hs', socket.handshake);
+        console.log('player log in response r', socket.request);
         // init the listeners
-        
+
       });
 
       socket.on('time', (timeString) => {
@@ -16,7 +17,9 @@
         el.innerHTML = 'Server time: ' + timeString;
       });
 
-      socket.on('playerLogIn')
+      socket.on('playerLogIn', (response) => {
+        console.log('in socket on playerLogIn', response);
+      })
     </script>
   </head>
   <body>

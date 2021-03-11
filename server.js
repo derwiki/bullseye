@@ -39,6 +39,7 @@ io.on('connection', (socket) => {
 
   socket.on('playerLogIn', (response) => {
     console.log('server player log in', response);
+    socket.emit('playerLogIn', response);
   })
   socket.on('disconnect', () => console.log('Client disconnected'));
 });
