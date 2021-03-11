@@ -57,6 +57,8 @@ class Game {
   tick() {
     const beta = this.tallyTilt('beta');
     const gamma = this.tallyTilt('gamma');
+    console.log('total beta', beta);
+    console.log('total gamma', gamma);
 
     // change this to velocity based
     // this.pacPersonX = this.pacPersonX + (beta / 4);
