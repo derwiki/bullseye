@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const updateDebugList = (payload) => {
         debugList.innerHTML = (
-          `<li>${response.beta}</li><li>${response.gamma}</li>`
+          `<li>${payload.beta}</li><li>${payload.gamma}</li>`
         );
       };
 
