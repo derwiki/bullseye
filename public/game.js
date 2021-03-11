@@ -35,15 +35,15 @@ document.addEventListener('DOMContentLoaded', () => {
       
       socket.on('gameState', (response) => {
         console.log('gameState', response);
-        updatePlayersList(response.playersList);
+        updatePlayersList(response.players);
         updateDebugList(response);
         updatePacPosition(response.pacPersonX, response.pacPersonY);
         updateBullseye(response.isBullseye);
       });
     
-      const updatePlayersList = (names) => {
-        playersList.innerHTML = names.map((name) => {
-          return `<li>${name}</li>`;
+      const updatePlayersList = (players) => {
+        playersList.innerHTML = Object.keys(players).map((name) => {
+          return `<li><span class="score">${players[name].score}</span>${name}</li>`;
         }).join('');
       };
 

@@ -18,6 +18,7 @@ class Game {
     this.io = io;
     this.pacPersonX = 300;
     this.pacPersonY = 300;
+    this.turnsInBullseye = 0;
 
     this.players = {};
 
@@ -30,18 +31,22 @@ class Game {
     console.log('adding player:', name)
     this.players[name] = {
       beta: 0,
-      gamma: 0
+      gamma: 0,
+      score: 0
     };
     this.io.emit('playerListUpdate', Object.keys(this.players));
   }
 
-  updatePlayer(data) {
-    console.log('got update for player', data.name);
+  updatePlayer({name, beta, gamma}) {
+    console.log('got update for player', name);
     // { name: 'alex', x: 1, y: 2, z: 3 }
-    this.players[data.name] = {
-      beta: data.beta,
-      gamma: data.gamma
-    };
+    this.players[name] = this.players[name] || {score: 0};
+    this.players[name].beta = beta;
+    this.players[name].gamma = gamma;
+  }
+
+  updateScore(name, newScore) {
+    this.players[name].score = newScore;
   }
 
   tallyTilt(attr) {
@@ -77,13 +82,23 @@ class Game {
     const isBullseye = (
       (Xpct > 40 && Xpct < 60) && (Ypct > 45 && Ypct < 55)
     );
+
+    if (!isBullseye) {
+      this.turnsInBullseye = 0;
+    } else {
+      this.turnsInBullseye += 1;
+      const playerNames = Object.keys(this.players);
+      playerNames.forEach((name) => {
+        this.updateScore(name, this.players[name].score + (playerNames.length - 1) * this.turnsInBullseye);
+      })
+    }
     
     this.io.emit('gameState',  {
       beta,
       gamma,
       pacPersonX: Xpct,
       pacPersonY: Ypct,
-      playersList: Object.keys(this.players),
+      players: this.players,
       isBullseye
     });
     // broadscast calc game state
