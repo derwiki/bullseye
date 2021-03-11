@@ -1,5 +1,3 @@
-const confetti = require("canvas-confetti");
-
 document.addEventListener('DOMContentLoaded', () => {
     let socket = io();
 
