@@ -57,7 +57,14 @@ document.addEventListener('DOMContentLoaded', () => {
         pacPerson.style.top = y + 'px';
       }
 
+      let lastUpdate = Date.now();
       const deviceMotionHandler = e => {
+        const newTime = Date.now();
+        if ((newTime - lastUpdate) < 200) {
+          return;
+        }
+        lastUpdate = newTime;
+
         const { beta, gamma } = e;
         socket.emit('clientGameEvent', {beta, gamma});
       }

@@ -61,16 +61,8 @@ class Game {
     console.log('total gamma', gamma);
     
     // change this to velocity based
-    // this.pacPersonX = this.pacPersonX + (beta / 4);
-    // this.pacPersonY = this.pacPersonY + (gamma / 4);
-    const secs = new Date().getSeconds();
-    if (secs > 30) {
-      this.pacPersonX = this.pacPersonX + 2;
-      this.pacPersonY = this.pacPersonY + 2;  
-    } else {
-      this.pacPersonX = this.pacPersonX - 2;
-      this.pacPersonY = this.pacPersonY - 2;  
-    }
+    this.pacPersonX = this.pacPersonX + (beta / 4);
+    this.pacPersonY = this.pacPersonY + (gamma / 4);
 
     this.io.emit('gameState',  {
       beta,
