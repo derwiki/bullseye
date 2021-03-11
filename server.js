@@ -31,8 +31,8 @@ class Game {
 }
 
 const games = {
-  roomId: Game.new()
-}
+  //
+};
 
 io.on('connection', (socket) => {
   console.log('Client connected');
