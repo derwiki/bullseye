@@ -7,6 +7,7 @@ const PORT = process.env.PORT || 3000;
 const INDEX = '/index.html';
 
 const server = express()
+  .use(express.static('public'))
   .use((req, res) => res.sendFile(INDEX, { root: __dirname }))
   .listen(PORT, () => console.log(`Listening on ${PORT}`));
 
@@ -65,7 +66,8 @@ class Game {
       beta,
       gamma,
       pacPersonX: this.pacPersonX,
-      pacPersonY: this.pacPersonY
+      pacPersonY: this.pacPersonY,
+      playersList: Object.keys(this.players)
     });
     // broadscast calc game state
   }
@@ -88,5 +90,3 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => console.log('Client disconnected'));
 });
-
-setInterval(() => io.emit('time', new Date().toTimeString()), 1000);

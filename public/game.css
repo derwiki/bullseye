@@ -1,0 +1,41 @@
+html, body {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+.gameScene {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.pacPerson {
+    position: absolute;
+    background: red;
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+}
+
+.playersList {
+    position: absolute;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    top: 2px;
+    left: 2px;
+    font-size: 12px;
+}
+
+.playersList li {
+    margin: 0;
+    padding: 0;
+}
+
+#intro {
+    text-align: center;
+    width: 300px;
+    margin: 0 auto;
+}
