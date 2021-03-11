@@ -62,7 +62,9 @@ io.on('connection', (socket) => {
     socket.emit('playerLogIn', response);
   })
   socket.on('disconnect', () => console.log('Client disconnected'));
+  socket.on('clientGameEvent', (e) => {
+    console.log('Client game event', e)
+  });
 });
-
 
 setInterval(() => io.emit('time', new Date().toTimeString()), 1000);

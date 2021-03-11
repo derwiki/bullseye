@@ -1,6 +1,12 @@
 <html>
   <head>
     <script src="/socket.io/socket.io.js"></script>
+ 
+  </head>
+  <body>
+    <h1>Pac Person!</h1>
+    <p id="server-time"></p>
+    <button id="startGame">Start</button>
     <script>
       let socket = io();
       let el;
@@ -23,10 +29,27 @@
       socket.on('gameState', (response) => {
         console.log('gameState', response);
       })
+
+      document.getElementById('startGame').onclick = () => {
+        if (typeof DeviceMotionEvent.requestPermission === 'function') {
+            DeviceMotionEvent.requestPermission()
+                .then(permissionState => {
+                    if (permissionState === 'granted') {
+                        //window.addEventListener('devicemotion', deviceMotionHandler);
+                        window.addEventListener('deviceorientation', deviceMotionHandler);
+
+                    }
+                })
+                .catch(console.error);
+        } else {
+            // handle regular non iOS 13+ devices
+        }
+      }
+
+      const deviceMotionHandler = e => {
+        const { beta, gamma } = e;
+        socket.emit('clientGameEvent', {beta, gamma});
+    }
     </script>
-  </head>
-  <body>
-    <h1>Pac Person!</h1>
-    <p id="server-time"></p>
   </body>
 </html>
