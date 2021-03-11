@@ -1,3 +1,5 @@
+const confetti = require("canvas-confetti");
+
 document.addEventListener('DOMContentLoaded', () => {
     let socket = io();
 
@@ -38,6 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updatePlayersList(response.playersList);
         updateDebugList(response);
         updatePacPosition(response.pacPersonX, response.pacPersonY);
+        updateBullseye(response.isBullseye);
       });
     
       const updatePlayersList = (names) => {
@@ -48,13 +51,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const updateDebugList = (payload) => {
         debugList.innerHTML = (
-          `<li>${payload.beta}</li><li>${payload.gamma}</li><li>${payload.pacPersonX}</li><li>${payload.pacPersonY}</li>`
+          `<li>${payload.beta}</li>
+          <li>${payload.gamma}</li>
+          <li>${payload.pacPersonX}</li>
+          <li>${payload.pacPersonY}</li>
+          <li>${payload.isBullseye}</li>`
         );
       };
 
       const updatePacPosition = (x, y) => {
         pacPerson.style.left = x + '%';
         pacPerson.style.top = y + '%';
+      }
+
+      let lastConfetti = Date.now();
+      const updateBullseye = (isBullseye) => {
+        if (!isBullseye) {
+          return;
+        }
+        const newConfetti = Date.now();
+        if ((newConfetti - lastConfetti) < 500) {
+          lastConfetti = newConfetti;
+          confetti({
+            particleCount: 80,
+            spread: 40,
+            origin: {
+              x: 0.5,
+              y: 0.5
+            }
+          });
+        }
+        
       }
 
       let lastUpdate = Date.now();

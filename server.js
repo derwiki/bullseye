@@ -71,12 +71,20 @@ class Game {
     if (this.pacPersonY > MAX_Y - 0.08 * MAX_Y) this.pacPersonY = MAX_Y - 0.08 * MAX_Y;
     if (this.pacPersonY < 0) this.pacPersonY = 0;
 
+    const Xpct = this.pacPersonX / MAX_X * 100;
+    const Ypct = this.pacPersonY / MAX_Y * 100
+
+    const isBullseye = (
+      (Xpct > 40 && Xpct < 60) && (Ypct > 45 && Ypct < 55)
+    );
+    
     this.io.emit('gameState',  {
       beta,
       gamma,
-      pacPersonX: this.pacPersonX / MAX_X * 100,
-      pacPersonY: this.pacPersonY / MAX_Y * 100,
-      playersList: Object.keys(this.players)
+      pacPersonX: Xpct,
+      pacPersonY: Ypct,
+      playersList: Object.keys(this.players),
+      isBullseye
     });
     // broadscast calc game state
   }
