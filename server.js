@@ -11,39 +11,59 @@ const server = express()
   .listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 const io = socketIO(server);
+
 class Game {
   constructor(io) {
     this.io = io;
+    this.pacPersonX = 0;
+    this.pacPersonY = 0;
+
+    this.players = {};
+
     setInterval(() => {
       this.tick();
-    }, 250);
-    // generate map??? i dunno
+    }, 1000);
   }
 
-  setSocket(socket) {
-    this.socket = this.socket || socket;
+  addPlayer(name) {
+    console.log('adding player:', name)
+    this.players[name] = {
+      x: 0,
+      y: 0
+    };
+    this.io.emit('playerListUpdate', Object.keys(this.players));
   }
 
-  assignPlayer(ab, socket) {
-    // sets who is each player
+  updatePlayer(data) {
+    console.log('got update for player', data.name);
+    // { name: 'alex', x: 1, y: 2, z: 3 }
+    this.players[data.name] = {
+      x: data.x,
+      y: data.y
+    };
   }
 
-  updatePlayer(ab, data) {
-    // just assign the velocity/tilt
+  tallyTilt(attr) {
+    let result = 0;
+    Object.keys(this.players).forEach((name) => {
+      result += this.players[name][attr];
+    });
+    return result;
   }
 
   tick() {
+    const totalX = this.tallyTilt('x');
+    const totalY = this.tallyTilt('y');
+
+    this.pacPersonX = this.pacPersonX + totalX;
+    this.pacPersonY = this.pacPersonY + totalY;
+
     this.io.emit('gameState',  {
-      io: 2
+      totalX,
+      totalY,
+      pacPersonX: this.pacPersonX,
+      pacPersonY: this.pacPersonY
     });
-    if (this.socket) {
-      this.socket.emit('gameState', {
-        foo: 42
-      });
-    } else {
-      console.log('no this.socket')
-    }
-    
     // broadscast calc game state
   }
 }
@@ -54,8 +74,6 @@ const games = {
 
 io.on('connection', (socket) => {
   console.log('Client connected');
-
-  games.foo.setSocket(socket);
 
   socket.on('playerLogIn', (response) => {
     console.log('server player log in', response);
