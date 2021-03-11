@@ -20,6 +20,9 @@
       socket.on('playerLogIn', (response) => {
         console.log('in socket on playerLogIn', response);
       })
+      socket.on('gameState', (response) => {
+        console.log('gameState', response);
+      })
     </script>
   </head>
   <body>
