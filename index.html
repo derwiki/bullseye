@@ -5,10 +5,18 @@
       let socket = io();
       let el;
 
+      socket.emit('playerLogIn', (response) => {
+        console.log('player log in response', response);
+        // init the listeners
+        
+      });
+
       socket.on('time', (timeString) => {
         el = document.getElementById('server-time');
         el.innerHTML = 'Server time: ' + timeString;
       });
+
+      socket.on('playerLogIn')
     </script>
   </head>
   <body>
