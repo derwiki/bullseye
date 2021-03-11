@@ -19,7 +19,8 @@ html, body {
     border-radius: 20px;
 }
 
-.playersList {
+.playersList,
+.debugList {
     position: absolute;
     list-style-type: none;
     margin: 0;
@@ -29,9 +30,14 @@ html, body {
     font-size: 12px;
 }
 
-.playersList li {
+.playersList li,
+.debugList li {
     margin: 0;
     padding: 0;
+}
+
+.debugList {
+    bottom: 3px;
 }
 
 #intro {

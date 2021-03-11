@@ -25,6 +25,10 @@ document.addEventListener('DOMContentLoaded', () => {
       playersList.className = 'playersList';
       gameScene.appendChild(playersList);
 
+      const debugList = document.createElement('ul');
+      debugList.className = 'debugList';
+      gameScene.appendChild(debugList);
+
       socket.on('playerLogIn', (response) => {
         console.log('in socket on playerLogIn', response);
       });
@@ -32,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
       socket.on('gameState', (response) => {
         console.log('gameState', response);
         updatePlayersList(response.playersList);
+        updateDebugList(response);
         updatePacPosition(response.pacPersonX, response.pacPersonY);
       });
     
@@ -40,6 +45,13 @@ document.addEventListener('DOMContentLoaded', () => {
           return `<li>${name}</li>`;
         })
       };
+
+      const updateDebugList = (payload) => {
+        debugList.innerHTML = (
+          `<li>${response.beta}</li><li>${response.gamma}</li>`
+        );
+      };
+
 
       const updatePacPosition = (x, y) => {
         pacPerson.style.left = x + 'px';
