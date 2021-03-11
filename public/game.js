@@ -43,12 +43,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const updatePlayersList = (names) => {
         playersList.innerHTML = names.map((name) => {
           return `<li>${name}</li>`;
-        })
+        }).join('');
       };
 
       const updateDebugList = (payload) => {
         debugList.innerHTML = (
-          `<li>${payload.beta}</li><li>${payload.gamma}</li>`
+          `<li>${payload.beta}</li><li>${payload.gamma}</li><li>${payload.pacPersonX}</li><li>${payload.pacPersonY}</li>`
         );
       };
 
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
       let lastUpdate = Date.now();
       const deviceMotionHandler = e => {
         const newTime = Date.now();
-        if ((newTime - lastUpdate) < 200) {
+        if ((newTime - lastUpdate) < 25) {
           return;
         }
         lastUpdate = newTime;

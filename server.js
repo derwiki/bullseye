@@ -23,7 +23,7 @@ class Game {
 
     setInterval(() => {
       this.tick();
-    }, 1000);
+    }, 25);
   }
 
   addPlayer(name) {
@@ -61,9 +61,13 @@ class Game {
     console.log('total gamma', gamma);
     
     // change this to velocity based
-    const SPEED = 1;
+    const SPEED = 2;
     this.pacPersonX = this.pacPersonX + (gamma * SPEED);
     this.pacPersonY = this.pacPersonY + (beta * SPEED);
+    if (this.pacPersonX > 256) this.pacPersonX = 256;
+    if (this.pacPersonX < 0) this.pacPersonX = 0;
+    if (this.pacPersonY > 256) this.pacPersonY = 256;
+    if (this.pacPersonY < 0) this.pacPersonY = 0;
 
     this.io.emit('gameState',  {
       beta,
