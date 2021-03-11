@@ -28,8 +28,8 @@ class Game {
   addPlayer(name) {
     console.log('adding player:', name)
     this.players[name] = {
-      x: 0,
-      y: 0
+      beta: 0,
+      gamma: 0
     };
     this.io.emit('playerListUpdate', Object.keys(this.players));
   }
@@ -38,8 +38,8 @@ class Game {
     console.log('got update for player', data.name);
     // { name: 'alex', x: 1, y: 2, z: 3 }
     this.players[data.name] = {
-      x: data.x,
-      y: data.y
+      beta: data.beta,
+      gamma: data.gamma
     };
   }
 
@@ -48,19 +48,22 @@ class Game {
     Object.keys(this.players).forEach((name) => {
       result += this.players[name][attr];
     });
+    result = Math.min(180, result);
+    result = Math.max(-180, result);
     return result;
   }
 
   tick() {
-    const totalX = this.tallyTilt('x');
-    const totalY = this.tallyTilt('y');
+    const beta = this.tallyTilt('beta');
+    const gamma = this.tallyTilt('gamma');
 
-    this.pacPersonX = this.pacPersonX + totalX;
-    this.pacPersonY = this.pacPersonY + totalY;
+    // change this to velocity based
+    this.pacPersonX = this.pacPersonX + (beta / 4);
+    this.pacPersonY = this.pacPersonY + (gamma / 4);
 
     this.io.emit('gameState',  {
-      totalX,
-      totalY,
+      beta,
+      gamma,
       pacPersonX: this.pacPersonX,
       pacPersonY: this.pacPersonY
     });
@@ -76,13 +79,14 @@ io.on('connection', (socket) => {
   console.log('Client connected');
 
   socket.on('playerLogIn', (response) => {
-    console.log('server player log in', response);
-    socket.emit('playerLogIn', response);
+    games.foo.addPlayer(response.name);
   })
-  socket.on('disconnect', () => console.log('Client disconnected'));
-  socket.on('clientGameEvent', (e) => {
-    console.log('Client game event', e)
+
+  socket.on('clientGameEvent', (response) => {
+    games.foo.updatePlayer(response);
   });
+
+  socket.on('disconnect', () => console.log('Client disconnected'));
 });
 
 setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
