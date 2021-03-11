@@ -38,7 +38,6 @@ class Game {
   }
 
   updatePlayer({name, beta, gamma}) {
-    console.log('got update for player', name);
     // { name: 'alex', x: 1, y: 2, z: 3 }
     this.players[name] = this.players[name] || {score: 0};
     this.players[name].beta = beta;
@@ -62,8 +61,6 @@ class Game {
   tick() {
     const beta = this.tallyTilt('beta');
     const gamma = this.tallyTilt('gamma');
-    console.log('total beta', beta);
-    console.log('total gamma', gamma);
     
     // change this to velocity based
     const SPEED = 2;

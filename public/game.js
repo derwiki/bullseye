@@ -34,7 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       
       socket.on('gameState', (response) => {
-        console.log('gameState', response);
         updatePlayersList(response.players);
         updateDebugList(response);
         updatePacPosition(response.pacPersonX, response.pacPersonY);
