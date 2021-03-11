@@ -63,6 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       let lastConfetti = Date.now();
+      let confettiCount = 0;
       const updateBullseye = (isBullseye) => {
         if (!isBullseye) {
           return;
@@ -70,6 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const newConfetti = Date.now();
         if ((newConfetti - lastConfetti) > 500) {
           lastConfetti = newConfetti;
+          confettiCount++;
           confetti({
             particleCount: 80,
             spread: 40,
