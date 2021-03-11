@@ -37,7 +37,8 @@ html, body {
 }
 
 .debugList {
-    bottom: 3px;
+    right: 3px;
+    text-align: right;
 }
 
 #intro {

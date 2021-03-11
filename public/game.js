@@ -52,7 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
         );
       };
 
-
       const updatePacPosition = (x, y) => {
         pacPerson.style.left = x + 'px';
         pacPerson.style.top = y + 'px';
