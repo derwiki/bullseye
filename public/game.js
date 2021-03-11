@@ -30,8 +30,9 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       
       socket.on('gameState', (response) => {
-        updatePlayersList(response.playersList);
         console.log('gameState', response);
+        updatePlayersList(response.playersList);
+        updatePacPosition(response.pacPersonX, response.pacPersonY);
       });
     
       const updatePlayersList = (names) => {
@@ -39,6 +40,11 @@ document.addEventListener('DOMContentLoaded', () => {
           return `<li>${name}</li>`;
         })
       };
+
+      const updatePacPosition = (x, y) => {
+        pacPerson.style.left = x + 'px';
+        pacPerson.style.top = y + 'px';
+      }
 
       const deviceMotionHandler = e => {
         const { beta, gamma } = e;
