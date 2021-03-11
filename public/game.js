@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
         lastUpdate = newTime;
 
         const { beta, gamma } = e;
-        socket.emit('clientGameEvent', {beta, gamma});
+        socket.emit('clientGameEvent', {beta, gamma, name});
       }
     
       if (typeof DeviceMotionEvent.requestPermission === 'function') {

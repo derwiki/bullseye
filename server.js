@@ -61,8 +61,9 @@ class Game {
     console.log('total gamma', gamma);
     
     // change this to velocity based
-    this.pacPersonX = this.pacPersonX + (beta / 4);
-    this.pacPersonY = this.pacPersonY + (gamma / 4);
+    const SPEED = 1;
+    this.pacPersonX = this.pacPersonX + (gamma * SPEED);
+    this.pacPersonY = this.pacPersonY + (beta * SPEED);
 
     this.io.emit('gameState',  {
       beta,
