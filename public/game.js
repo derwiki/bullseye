@@ -53,8 +53,8 @@ document.addEventListener('DOMContentLoaded', () => {
       };
 
       const updatePacPosition = (x, y) => {
-        pacPerson.style.left = x + 'px';
-        pacPerson.style.top = y + 'px';
+        pacPerson.style.left = x + '%';
+        pacPerson.style.top = y + '%';
       }
 
       let lastUpdate = Date.now();

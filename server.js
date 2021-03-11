@@ -64,16 +64,18 @@ class Game {
     const SPEED = 2;
     this.pacPersonX = this.pacPersonX + (gamma * SPEED);
     this.pacPersonY = this.pacPersonY + (beta * SPEED);
-    if (this.pacPersonX > 256) this.pacPersonX = 256;
+    const MAX_X = 500;
+    const MAX_Y = 1000;
+    if (this.pacPersonX > MAX_X - 0.08 * MAX_X) this.pacPersonX = MAX_X - 0.08 * MAX_X;
     if (this.pacPersonX < 0) this.pacPersonX = 0;
-    if (this.pacPersonY > 256) this.pacPersonY = 256;
+    if (this.pacPersonY > MAX_Y - 0.08 * MAX_Y) this.pacPersonY = MAX_Y - 0.08 * MAX_Y;
     if (this.pacPersonY < 0) this.pacPersonY = 0;
 
     this.io.emit('gameState',  {
       beta,
       gamma,
-      pacPersonX: this.pacPersonX,
-      pacPersonY: this.pacPersonY,
+      pacPersonX: this.pacPersonX / MAX_X * 100,
+      pacPersonY: this.pacPersonY / MAX_Y * 100,
       playersList: Object.keys(this.players)
     });
     // broadscast calc game state
