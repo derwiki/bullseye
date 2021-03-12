@@ -102,8 +102,9 @@ class Game {
         (Xpct > 40 && Xpct < 60) && (Ypct > 45 && Ypct < 55)
       );
 
+      this.players[name].isBullseye = isBullseye;
       if (isBullseye) {
-        this.players[name].turnsInBullseye 
+        this.players[name].turnsInBullseye += 1;
       }
       //console.log(this.players[name]);
     });
@@ -111,7 +112,7 @@ class Game {
 
     const playerNames = Object.keys(this.players);
     playerNames.forEach((name) => {
-      this.updateScore(name, this.players[name].score + (playerNames.length - 1) * this.turnsInBullseye);
+      this.updateScore(name, this.players[name].score + this.players[name].inBullseye ? 1 : 0);
     })
 
     this.io.emit('gameState',  {

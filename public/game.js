@@ -47,12 +47,12 @@ document.addEventListener('DOMContentLoaded', () => {
           updatePacPosition(name, Xpct, Ypct);
         })
         updateDebugList(response);
-        //updateBullseye(response.isBullseye);
+        updateBullseye(response);
       });
     
       const updatePlayersList = (players) => {
         playersList.innerHTML = Object.keys(players).map((name) => {
-          return `<li><span class="score">${players[name].score}</span>${name}</li>`;
+          return `<li><span class="score">${players[name].score} &nbsp;</span>${name}</li>`;
         }).join('');
       };
 
@@ -82,24 +82,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
       let lastConfetti = Date.now();
       let confettiCount = 0;
-      const updateBullseye = (isBullseye) => {
-        if (!isBullseye) {
-          return;
-        }
-        const newConfetti = Date.now();
-        if ((newConfetti - lastConfetti) > 500) {
-          lastConfetti = newConfetti;
-          confettiCount++;
-          confetti({
-            particleCount: 80,
-            spread: 40,
-            origin: {
-              x: 0.5,
-              y: 0.5
+      const updateBullseye = (response) => {
+        const names = Object.keys(response.players);
+        names.forEach(name => {
+          const { isBullseye } = response.players[name];
+          if (isBullseye) {
+            const newConfetti = Date.now();
+            if ((newConfetti - lastConfetti) > 500) {
+              lastConfetti = newConfetti;
+              confettiCount++;
+              confetti({
+                particleCount: 80,
+                spread: 40,
+                origin: {
+                  x: 0.5,
+                  y: 0.5
+                }
+              });
             }
-          });
-        }
-        
+          }
+        });
       }
 
       let lastUpdate = Date.now();
