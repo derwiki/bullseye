@@ -66,12 +66,15 @@ document.addEventListener('DOMContentLoaded', () => {
         );
       };
 
+      const colors = ['red', 'orange', 'green', 'blue', 'indigo', 'violet'];
       const updatePacPosition = (name, x, y) => {
         let pacPerson = pacPersons[name];
         if (!pacPerson) {
           pacPerson = document.createElement('div');
           pacPerson.className = 'pacPerson';
           pacPerson.id = name;
+          const color = colors[Object.keys(pacPersons).length];
+          pacPerson.style.backgroundColor = color;
           pacPersons[name] = pacPerson;
           gameScene.appendChild(pacPerson);
         }
