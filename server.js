@@ -17,9 +17,6 @@ const TICK = 25;
 class Game {
   constructor(io) {
     this.io = io;
-    this.pacPersonX = 300;
-    this.pacPersonY = 300;
-    this.turnsInBullseye = 0; // deprec
     this.players = {};
 
     setInterval(() => {
@@ -56,16 +53,6 @@ class Game {
     this.players[name].score = newScore;
   }
 
-  tallyTilt(attr) {
-    let result = 0;
-    Object.keys(this.players).forEach((name) => {
-      result += this.players[name][attr];
-    });
-    result = Math.min(180, result);
-    result = Math.max(-180, result);
-    return result;
-  }
-
   tick() {
     
     // change this to velocity based
@@ -75,7 +62,6 @@ class Game {
 
     Object.keys(this.players).forEach((name) => {
       let {beta, gamma, x, y} = this.players[name];
-      //console.log(name, x, y);
       beta = Math.min(180, beta);
       beta = Math.max(-180, beta);
       gamma = Math.min(180, gamma);
@@ -87,10 +73,8 @@ class Game {
       if (y > MAX_Y - 0.08 * MAX_Y) y = MAX_Y - 0.08 * MAX_Y;
       if (y < 0) y = 0;
 
-      //console.log(x, y);
       const Xpct = x / MAX_X * 100;
       const Ypct = y / MAX_Y * 100
-      // console.log(name, x, Xpct, y, Ypct);
       this.players[name].x = x;
       this.players[name].y = y;
       this.players[name].Xpct = Xpct;
@@ -105,22 +89,11 @@ class Game {
       this.players[name].isBullseye = isBullseye;
       if (isBullseye) {
         this.players[name].turnsInBullseye += 1;
+        this.players[name].score += 1;
       }
-      //console.log(this.players[name]);
     });
    
-
-    const playerNames = Object.keys(this.players);
-    playerNames.forEach((name) => {
-      this.updateScore(name, this.players[name].score + this.players[name].inBullseye ? 1 : 0);
-    })
-
-    this.io.emit('gameState',  {
-      //beta,
-      //gamma,
-      players: this.players,
-    });
-    // broadscast calc game state
+    this.io.emit('gameState',  { players: this.players });
   }
 }
 
