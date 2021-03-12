@@ -83,7 +83,7 @@ class Game {
       this.players[name].gamma = gamma;
 
       const isBullseye = (
-        (Xpct > 40 && Xpct < 60) && (Ypct > 45 && Ypct < 55)
+        (Xpct > 45 && Xpct < 55) && (Ypct > 47 && Ypct < 52)
       );
 
       this.players[name].isBullseye = isBullseye;
