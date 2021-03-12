@@ -13,6 +13,8 @@ const server = express()
 
 const io = socketIO(server);
 const TICK = 25;
+const MAX_X = 500;
+const MAX_Y = 1000;
 
 class Game {
   constructor(io) {
@@ -30,12 +32,20 @@ class Game {
       beta: 0,
       gamma: 0,
       score: 0,
-      x: 300, // virtual grid
-      y: 300, // virtual grid
+      x: Math.floor(Math.random() * MAX_X), // virtual grid
+      y: Math.floor(Math.random() * MAX_Y), // virtual grid
       Xpct: 50, // %
       Ypct: 50, // %
       turnsInBullseye: 0,
+      name,
     };
+
+    while (this.checkCollisionsWithOtherPlayers(this.players[name])) {
+      console.log(`random placement of ${name} collided with other player; re-randomizing`);
+      this.players[name].x = Math.random() * MAX_X;
+      this.players[name].y = Math.random() * MAX_Y;
+    }
+
     console.log('player added:', this.players[name]);
     this.io.emit('playerListUpdate', Object.keys(this.players));
   }
@@ -59,32 +69,35 @@ class Game {
     return (r1 + r2) ** 2 > (p1x - p2x) ** 2 + (p1y - p2y) ** 2;
   }
 
-  checkCollisions() {
-    const names = Object.keys(this.players);
-    if (names.length !== 2) {
-      return;
-    }
+  checkPlayerCollision(player1, player2) {
+    if (player1 === undefined || player2 === undefined) return false;
+    return this.checkCollision(player1.x, player1.y, 40, player2.x, player2.y, 40);
+  }
 
-    const player1 = this.players[names[0]];
-    const player2 = this.players[names[1]];
-    if (player1.x === undefined || player1.y === undefined) {
-      console.log('player1 coord undefined, returning');
-    }
-    const isCollision = this.checkCollision(player1.x, player1.y, 40, player2.x, player2.y, 40);
-    if (isCollision) {
-      console.log('Collision');
-    }
+  checkCollisionsWithOtherPlayers(player) {
+    const names = Object.keys(this.players);
+    let found = false;
+    names.forEach(name => {
+        if (player.name !== name) {
+          const collision = this.checkPlayerCollision(player, this.players[name]);
+          //console.log(`${player.name} vs ${name}: ${collision}`);
+          if (collision) {
+            found = true;
+          }
+        }
+    });
+    return found;
   }
 
   tick() {
     
     // change this to velocity based
     const SPEED = 2;
-    const MAX_X = 500;
-    const MAX_Y = 1000;
 
     Object.keys(this.players).forEach((name) => {
       let {beta, gamma, x, y} = this.players[name];
+      const oldX = x;
+      const oldY = y;
       beta = Math.min(180, beta);
       beta = Math.max(-180, beta);
       gamma = Math.min(180, gamma);
@@ -95,6 +108,12 @@ class Game {
       if (x < 0) x = 0;
       if (y > MAX_Y - 0.08 * MAX_Y) y = MAX_Y - 0.08 * MAX_Y;
       if (y < 0) y = 0;
+
+      const isCollision = this.checkCollisionsWithOtherPlayers(this.players[name]);
+      if (isCollision) {
+        x = Math.random() * MAX_X;
+        y = Math.random() * MAX_Y;
+      }
 
       const Xpct = x / MAX_X * 100;
       const Ypct = y / MAX_Y * 100
@@ -116,7 +135,6 @@ class Game {
       }
     });
    
-    this.checkCollisions();
     this.io.emit('gameState',  { players: this.players });
   }
 }
