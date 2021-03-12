@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     let socket = io();
+    const TICK = 25;
 
     document.getElementById('startGame').onclick = () => {
       const name = document.getElementById('playerName').value;
@@ -8,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
+      console.log('playerLogin', name)
       socket.emit('playerLogIn', { name });
 
       const intro = document.getElementById('intro');
@@ -17,9 +19,12 @@ document.addEventListener('DOMContentLoaded', () => {
       gameScene.className = 'gameScene';
       document.body.appendChild(gameScene);
 
+      /*
       const pacPerson = document.createElement('div');
       pacPerson.className = 'pacPerson';
-      gameScene.appendChild(pacPerson);
+      gameScene.appendChild(pacPerson);  // need to do based on gamestate
+      */
+      let pacPersons = {};
 
       const playersList = document.createElement('ul');
       playersList.className = 'playersList';
@@ -34,10 +39,15 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       
       socket.on('gameState', (response) => {
+        console.log(response);
         updatePlayersList(response.players);
+        const names = Object.keys(response.players)
+        names.forEach(name => {
+          const {Xpct, Ypct} = response.players[name]
+          updatePacPosition(name, Xpct, Ypct);
+        })
         updateDebugList(response);
-        updatePacPosition(response.pacPersonX, response.pacPersonY);
-        updateBullseye(response.isBullseye);
+        //updateBullseye(response.isBullseye);
       });
     
       const updatePlayersList = (players) => {
@@ -56,9 +66,18 @@ document.addEventListener('DOMContentLoaded', () => {
         );
       };
 
-      const updatePacPosition = (x, y) => {
+      const updatePacPosition = (name, x, y) => {
+        let pacPerson = pacPersons[name];
+        if (!pacPerson) {
+          pacPerson = document.createElement('div');
+          pacPerson.className = 'pacPerson';
+          pacPerson.id = name;
+          pacPersons[name] = pacPerson;
+          gameScene.appendChild(pacPerson);
+        }
         pacPerson.style.left = x + '%';
         pacPerson.style.top = y + '%';
+        console.log(pacPerson.style);
       }
 
       let lastConfetti = Date.now();
@@ -86,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
       let lastUpdate = Date.now();
       const deviceMotionHandler = e => {
         const newTime = Date.now();
-        if ((newTime - lastUpdate) < 25) {
+        if ((newTime - lastUpdate) < TICK) {
           return;
         }
         lastUpdate = newTime;

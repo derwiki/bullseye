@@ -12,19 +12,19 @@ const server = express()
   .listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 const io = socketIO(server);
+const TICK = 25;
 
 class Game {
   constructor(io) {
     this.io = io;
     this.pacPersonX = 300;
     this.pacPersonY = 300;
-    this.turnsInBullseye = 0;
-
+    this.turnsInBullseye = 0; // deprec
     this.players = {};
 
     setInterval(() => {
       this.tick();
-    }, 25);
+    }, TICK);
   }
 
   addPlayer(name) {
@@ -32,14 +32,22 @@ class Game {
     this.players[name] = {
       beta: 0,
       gamma: 0,
-      score: 0
+      score: 0,
+      x: 300, // virtual grid
+      y: 300, // virtual grid
+      Xpct: 50, // %
+      Ypct: 50, // %
+      turnsInBullseye: 0,
     };
+    console.log('player added:', this.players[name]);
     this.io.emit('playerListUpdate', Object.keys(this.players));
   }
 
   updatePlayer({name, beta, gamma}) {
     // { name: 'alex', x: 1, y: 2, z: 3 }
-    this.players[name] = this.players[name] || {score: 0};
+    if (!this.players[name]) {
+      this.addPlayer(name);
+    }
     this.players[name].beta = beta;
     this.players[name].gamma = gamma;
   }
@@ -59,44 +67,57 @@ class Game {
   }
 
   tick() {
-    const beta = this.tallyTilt('beta');
-    const gamma = this.tallyTilt('gamma');
     
     // change this to velocity based
     const SPEED = 2;
-    this.pacPersonX = this.pacPersonX + (gamma * SPEED);
-    this.pacPersonY = this.pacPersonY + (beta * SPEED);
     const MAX_X = 500;
     const MAX_Y = 1000;
-    if (this.pacPersonX > MAX_X - 0.08 * MAX_X) this.pacPersonX = MAX_X - 0.08 * MAX_X;
-    if (this.pacPersonX < 0) this.pacPersonX = 0;
-    if (this.pacPersonY > MAX_Y - 0.08 * MAX_Y) this.pacPersonY = MAX_Y - 0.08 * MAX_Y;
-    if (this.pacPersonY < 0) this.pacPersonY = 0;
 
-    const Xpct = this.pacPersonX / MAX_X * 100;
-    const Ypct = this.pacPersonY / MAX_Y * 100
+    Object.keys(this.players).forEach((name) => {
+      let {beta, gamma, x, y} = this.players[name];
+      //console.log(name, x, y);
+      beta = Math.min(180, beta);
+      beta = Math.max(-180, beta);
+      gamma = Math.min(180, gamma);
+      gamma = Math.max(-180, gamma);
+      x = x + (gamma * SPEED);
+      y = y + (beta * SPEED);
+      if (x > MAX_X - 0.08 * MAX_X) x = MAX_X - 0.08 * MAX_X;
+      if (x < 0) x = 0;
+      if (y > MAX_Y - 0.08 * MAX_Y) y = MAX_Y - 0.08 * MAX_Y;
+      if (y < 0) y = 0;
 
-    const isBullseye = (
-      (Xpct > 40 && Xpct < 60) && (Ypct > 45 && Ypct < 55)
-    );
+      //console.log(x, y);
+      const Xpct = x / MAX_X * 100;
+      const Ypct = y / MAX_Y * 100
+      // console.log(name, x, Xpct, y, Ypct);
+      this.players[name].x = x;
+      this.players[name].y = y;
+      this.players[name].Xpct = Xpct;
+      this.players[name].Ypct = Ypct;
+      this.players[name].beta = beta;
+      this.players[name].gamma = gamma;
 
-    if (!isBullseye) {
-      this.turnsInBullseye = 0;
-    } else {
-      this.turnsInBullseye += 1;
-      const playerNames = Object.keys(this.players);
-      playerNames.forEach((name) => {
-        this.updateScore(name, this.players[name].score + (playerNames.length - 1) * this.turnsInBullseye);
-      })
-    }
-    
+      const isBullseye = (
+        (Xpct > 40 && Xpct < 60) && (Ypct > 45 && Ypct < 55)
+      );
+
+      if (isBullseye) {
+        this.players[name].turnsInBullseye 
+      }
+      //console.log(this.players[name]);
+    });
+   
+
+    const playerNames = Object.keys(this.players);
+    playerNames.forEach((name) => {
+      this.updateScore(name, this.players[name].score + (playerNames.length - 1) * this.turnsInBullseye);
+    })
+
     this.io.emit('gameState',  {
-      beta,
-      gamma,
-      pacPersonX: Xpct,
-      pacPersonY: Ypct,
+      //beta,
+      //gamma,
       players: this.players,
-      isBullseye
     });
     // broadscast calc game state
   }
@@ -110,6 +131,7 @@ io.on('connection', (socket) => {
   console.log('Client connected');
 
   socket.on('playerLogIn', (response) => {
+    console.log('playerLogIn', response);
     games.foo.addPlayer(response.name);
   })
 
