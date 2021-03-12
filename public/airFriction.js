@@ -1,5 +1,8 @@
 var Example = Example || {};
 
+const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
+const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0)
+
 Example.airFriction = function() {
     var Engine = Matter.Engine,
         Render = Matter.Render,
@@ -18,9 +21,9 @@ Example.airFriction = function() {
         element: document.body,
         engine: engine,
         options: {
-            width: 800,
-            height: 600,
-            showVelocity: true
+            width: vw,
+            height: vh,
+            showVelocity: true,
         }
     });
 
@@ -38,10 +41,11 @@ Example.airFriction = function() {
         Bodies.rectangle(600, 100, 60, 60, { frictionAir: 0.1 }),
 
         // walls
-        Bodies.rectangle(400, 0, 800, 50, { isStatic: true }),
-        Bodies.rectangle(400, 600, 800, 50, { isStatic: true }),
-        Bodies.rectangle(800, 300, 50, 600, { isStatic: true }),
-        Bodies.rectangle(0, 300, 50, 600, { isStatic: true })
+        Bodies.rectangle(400, 0, vh, 50, { isStatic: true }),
+        Bodies.rectangle(400, vh-100, vh, 50, { isStatic: true }),
+        Bodies.rectangle(vh, 300, 50, vh-100, { isStatic: true }),
+        Bodies.rectangle(0, 300, 50, vh-100, { isStatic: true }),
+        Bodies.rectangle(0, 0, vw, vh, { isStatic: true })
     ]);
 
     // add mouse control
@@ -64,7 +68,7 @@ Example.airFriction = function() {
     // fit the render viewport to the scene
     Render.lookAt(render, {
         min: { x: 0, y: 0 },
-        max: { x: 800, y: 600 }
+        max: { x: vw, y: vh }
     });
 
     // context for MatterTools.Demo
