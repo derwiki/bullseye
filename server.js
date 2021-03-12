@@ -53,6 +53,29 @@ class Game {
     this.players[name].score = newScore;
   }
 
+  // https://stackoverflow.com/questions/8331243/circle-collision-in-javascript
+  checkCollision(p1x, p1y, r1, p2x, p2y, r2) {
+    // console.log((r1 + r2) ** 2, (p1x - p2x) ** 2 + (p1y - p2y) ** 2);
+    return (r1 + r2) ** 2 > (p1x - p2x) ** 2 + (p1y - p2y) ** 2;
+  }
+
+  checkCollisions() {
+    const names = Object.keys(this.players);
+    if (names.length !== 2) {
+      return;
+    }
+
+    const player1 = this.players[names[0]];
+    const player2 = this.players[names[1]];
+    if (player1.x === undefined || player1.y === undefined) {
+      console.log('player1 coord undefined, returning');
+    }
+    const isCollision = this.checkCollision(player1.x, player1.y, 40, player2.x, player2.y, 40);
+    if (isCollision) {
+      console.log('Collision');
+    }
+  }
+
   tick() {
     
     // change this to velocity based
@@ -93,6 +116,7 @@ class Game {
       }
     });
    
+    this.checkCollisions();
     this.io.emit('gameState',  { players: this.players });
   }
 }
